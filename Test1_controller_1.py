@@ -11,15 +11,20 @@
 import time
 import rospy
 import math
+import pandas as pd
+import numpy as np
 from geometry_msgs.msg import Twist,PoseStamped
 from nav_msgs.msg import Odometry,Path
 from array import *
 
+
 global x,y,path_record
+global position_points
 
 class Test1():
     def __init__(self):
         global path_record
+        global position_point
         #global x,y
         # initiliaze
         rospy.init_node('Test1', anonymous=False)
@@ -45,10 +50,17 @@ class Test1():
         #move_cmd.linear.x = 0.20
 	# let's turn at 0 radians/s
         #move_cmd.angular.z = 0
+        
+        #df = pd.read_csv(r'~/helloworld/turtlebot/Trajectory 2/Controller 1 velocity trajectory/controller 1 velocity trajectory 1.csv')
+        csvdata = open(r'/home/parallels/helloworld/turtlebot/Trajectory 2/Controller 1 velocity trajectory/controller 1 velocity trajectory 1.csv')
+        #data = pd.DataFrame(df)
+        controlist = np.loadtxt(csvdata,delimiter = ',')
 
 
         
-        controlist = [[0.22, 0.08921288], [0.22, 0.05219005], [0.22, 0.016936377], [0.22, -0.0019766241], [0.22, -0.018085748], [0.22, -0.03357576], [0.22, -0.05182302], [0.21961674, -0.07381378], [0.18707651, -0.09549905], [0.16126572, -0.12119541], [0.1518704, -0.14170808], [0.14747955, -0.15], [0.13067955, -0.15], [0.20208529, -0.15]]
+        #controlist = [[0.22, 0.08619805], [0.22, 0.0492173], [0.22, 0.015575036], [0.22, -0.0036964267], [0.22, -0.020278543], [0.22, -0.036236987], [0.22, -0.05179636], [0.21929398, -0.07203827], [0.18695402, -0.09743709], [0.17392552, -0.12357943], [0.16700569, -0.13891824], [0.16438286, -0.15], [0.17969832, -0.15], [0.14856686, -0.15], [0.1376025, -0.15], [0.10176429, -0.148137], [0.014952473, -0.13246465], [-0.06316837, -0.12348028], [-0.09905309, -0.121533446], [-0.09852211, -0.117804885], [-0.06925819, -0.110124215]]
+
+        
         #counter = 0
         #interv = 10  #maximum time
         #wait = 15    #waiting time
@@ -128,10 +140,18 @@ class Test1():
         #q3 = data.pose.pose.orientation.z
         #q4 = data.pose.pose.orientation.w
         #print(msg.pose.pose) ##忘记怎么写
-        theta = -135   #car rotation angle
-        position_x_change = x*math.cos(-math.radians(theta)) + y*math.sin(-math.radians(theta))
-        position_y_change = y*math.cos(-math.radians(theta)) - x*math.sin(-math.radians(theta)) 
-        with open("Trajectory_controller_1.txt", "a") as f:
+        initial_position = pd.read_csv(r'/home/parallels/helloworld/turtlebot/Trajectory 2/Controller 1 velocity trajectory/controller 1 initial points.csv')
+        initial_x,initial_y,theta =  initial_position.iloc[0]
+        #position_single = [3.00386388,3.00161412,3.93242426]
+        #initial_x = position_single[0]
+        #initial_y = position_single[1]
+        #theta = position_single[2]
+        theta = math.degrees(theta)
+        #theta = -135   #car rotation angle
+        position_x_change = x*math.cos(-math.radians(theta)) + y*math.sin(-math.radians(theta)) + initial_x
+        position_y_change = y*math.cos(-math.radians(theta)) - x*math.sin(-math.radians(theta)) + initial_y
+        
+        with open("Trajectory_controller_1.csv", "a") as f:
                 print(position_x_change,",",position_y_change, file=f)
         f.close()
         print("our x location is ",position_x_change, " our y location is ", position_y_change)

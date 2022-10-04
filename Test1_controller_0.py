@@ -11,6 +11,8 @@
 import time
 import rospy
 import math
+import pandas as pd
+import numpy as np
 from geometry_msgs.msg import Twist,PoseStamped
 from nav_msgs.msg import Odometry,Path
 from array import *
@@ -46,15 +48,12 @@ class Test1():
 	# let's turn at 0 radians/s
         #move_cmd.angular.z = 0
 
-
+        #csvdata = open(r'/home/parallels/helloworld/turtlebot/Trajectory 2/Controller 0 velocity trajectory/controller 0 velocity trajectory 1.csv')
+        #data = pd.DataFrame(df)
+        #controlist = np.loadtxt(csvdata,delimiter = ',')
+        controlist = [[0.16836806, -0.09762034], [0.04734952, -0.09360345], [-0.030327685, -0.09434827], [-0.0769276, -0.09925614], [-0.094307184, -0.105160154], [-0.10871135, -0.11202941], [-0.11501221, -0.115402326], [-0.13449146, -0.1179709], [-0.13393034, -0.12392834], [-0.1426897, -0.120149404], [-0.120742396, -0.1202434], [-0.10458504, -0.11812127], [-0.10176644, -0.12019608], [-0.102271736, -0.12203307], [-0.10332517, -0.119554795], [-0.103348166, -0.11110181], [-0.047489278, -0.123576894], [-0.0018793419, -0.10836193], [-0.07666069, -0.07325221], [-0.10858719, -0.06131251], [-0.041988276, -0.017577976], [-0.01427421, -0.0073633194], [-0.010054067, -0.0059220195], [-0.0072715953, -0.0044833273], [-0.005330898, -0.0033210665]]
         
-        controlist = [[ 0.22,-0.01],
-                      [ 0.22,-0.01],
-                      [ 0.22,-0.01],
-                      [ 0.22,-0.01],
-                      [0.22,-0.01],
-                      [ 0.22,-0.01],
-                      [ 0.22,-0.01]]
+
 
         #counter = 0
         #interv = 10  #maximum time
@@ -92,11 +91,11 @@ class Test1():
                 if 1.01>=end-start>=0.99:   
                   con_counter += 1
                   start = end
-                if con_counter == len(controlist)-1:
-                  if 0.41>=end-start>=0.39:
-                    print(end-start)
-                    con_counter+=1
-                    start = end
+                #if con_counter == len(controlist)-1:
+                  #if 0.41>=end-start>=0.39:
+                    #print(end-start)
+                    #con_counter+=1
+                    #start = end
                   
                     
 
@@ -136,10 +135,17 @@ class Test1():
         #q3 = data.pose.pose.orientation.z
         #q4 = data.pose.pose.orientation.w
         #print(msg.pose.pose) ##忘记怎么写
-        theta = -126.9354367   #car rotation angle
-        position_x_change = x*math.cos(-math.radians(theta)) + y*math.sin(-math.radians(theta))
-        position_y_change = y*math.cos(-math.radians(theta)) - x*math.sin(-math.radians(theta)) 
-        with open("Trajectory_controller_0.txt", "a") as f:
+        initial_position = pd.read_csv(r'/home/parallels/helloworld/turtlebot/Trajectory 2/Controller 1 velocity trajectory/controller 1 initial points.csv')
+        initial_x,initial_y,theta = initial_position.iloc[0]
+        #theta = math.degrees(theta)
+        #initial_x = 2.99606412
+        #initial_y = 2.9978848
+        #theta = 3.92950583
+        
+        theta = math.degrees(theta)
+        position_x_change = x*math.cos(-math.radians(theta)) + y*math.sin(-math.radians(theta)) + initial_x
+        position_y_change = y*math.cos(-math.radians(theta)) - x*math.sin(-math.radians(theta)) + initial_y
+        with open("Trajectory_controller_0.csv", "a") as f:
                 print(position_x_change,",",position_y_change, file=f)
         f.close()
         print("our x location is ",position_x_change, " our y location is ", position_y_change)
