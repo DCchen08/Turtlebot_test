@@ -67,7 +67,7 @@ class Test1():
         global x,y,path_record
         x = msg.pose.pose.position.x  #car frame x
         y = msg.pose.pose.position.y  #car frame y
-        theta = -135  # starting angle referred to world frame
+        theta = -135  # starting angle relative to world frame
         position_x_change = x*math.cos(-math.radians(theta)) + y*math.sin(-math.radians(theta))   #world frame x
         position_y_change = y*math.cos(-math.radians(theta)) - x*math.sin(-math.radians(theta))   #world frame y
         #with open("Trajectory_controller_0.txt", "a") as f:
